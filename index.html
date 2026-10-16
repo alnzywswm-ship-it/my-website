@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الزيرو كينج - ZEROKING Manager</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            100: '#fff9db',
+                            300: '#f5d77f',
+                            400: '#e6c352',
+                            500: '#d4af37',
+                            600: '#b38f24',
+                            700: '#8c6d13',
+                        },
+                        darkpanel: 'rgba(15, 23, 42, 0.85)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+        * {
+            font-family: 'Cairo', sans-serif;
+            cursor: none !important; /* Force custom cursor */
+        }
+
+        body {
+            background-color: #090d16;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Dynamic animated gradient background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            background: linear-gradient(135deg, #070a12 0%, #111827 40%, #1a1205 70%, #070a12 100%);
+            background-size: 300% 300%;
+            animation: gradientMove 12s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Gold glow overlay */
+        .gold-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.08) 0%, rgba(0, 0, 0, 0.7) 80%);
+            pointer-events: none;
+        }
+
+        /* Custom Chroma Rainbow Pointer */
+        .custom-cursor {
+            position: fixed;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.9);
+            animation: spinCursor 2s linear infinite;
+            transition: transform 0.05s ease-out;
+        }
+
+        .custom-cursor-follower {
+            position: fixed;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.6);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9998;
+            transition: transform 0.15s ease-out, left 0.1s ease-out, top 0.1s ease-out;
+        }
+
+        @keyframes spinCursor {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+
+        /* Gold Glassmorphism */
+        .gold-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .gold-card:hover {
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 10px 35px 0 rgba(212, 175, 55, 0.15);
+        }
+
+        /* Glowing text */
+        .text-gold-glow {
+            color: #d4af37;
+            text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+        }
+    </style>
+</head>
+<body class="antialiased select-none">
+
+    <!-- Backgrounds -->
+    <div class="animated-bg"></div>
+    <div class="gold-overlay"></div>
+
+    <!-- Custom Cursors -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-follower" id="customCursorFollower"></div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 ease-out bg-slate-900 border border-gold-500 text-gold-300 px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-gold-500 text-lg"></i>
+        <span id="toastMsg" class="font-bold text-sm">تم العملية بنجاح!</span>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Sidebar -->
+        <aside class="w-72 bg-slate-950/90 border-l border-gold-500/30 flex flex-col justify-between p-4 z-20 backdrop-blur-md shadow-2xl">
+            <div>
+                <!-- Brand Header -->
+                <div class="text-center py-4 border-b border-gold-500/20 mb-6">
+                    <div class="flex items-center justify-center gap-2 mb-1">
+                        <i class="fa-solid fa-crown text-gold-500 text-2xl animate-bounce"></i>
+                        <h1 class="text-2xl font-black tracking-widest text-gold-glow">ZEROKING</h1>
+                    </div>
+                    <p class="text-xs text-slate-400 font-semibold tracking-wider">نظام المزامنة والتحكم الملكي</p>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="space-y-1.5 overflow-y-auto max-h-[calc(100vh-210px)] pr-1">
+                    <button data-target="section-gmail" class="nav-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-envelope w-5 text-gold-500"></i>
+                        <span>قسم الجيميلات</span>
+                    </button>
+                    <button data-target="section-accounts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-user-shield w-5 text-gold-500"></i>
+                        <span>قسم الأكونتات</span>
+                    </button>
+                    <button data-target="section-codes" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-code w-5 text-gold-500"></i>
+                        <span>قسم الأكواد</span>
+                    </button>
+                    <button data-target="section-scripts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-terminal w-5 text-gold-500"></i>
+                        <span>قسم السكريبتات</span>
+                    </button>
+                    <button data-target="section-hacks" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-skull-crossbones w-5 text-gold-500"></i>
+                        <span>قسم الهكات</span>
+                    </button>
+                    <button data-target="section-general" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-key w-5 text-gold-500"></i>
+                        <span>قسم الحسابات</span>
+                    </button>
+                    <button data-target="section-pubg" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-crosshairs w-5 text-gold-500"></i>
+                        <span>حسابات ببجي</span>
+                    </button>
+                    <button data-target="section-roblox" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-cubes w-5 text-gold-500"></i>
+                        <span>حسابات روبلوكس</span>
+                    </button>
+                    <button data-target="section-clipboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-paste w-5 text-gold-500"></i>
+                        <span>الحافظة السريعة</span>
+                    </button>
+                    <button data-target="section-images" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
+                        <i class="fa-solid fa-image w-5 text-gold-500"></i>
+                        <span>قسم الصور</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Online Sync Status Widget -->
+            <div class="pt-3 border-t border-gold-500/20 text-xs text-slate-400 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="syncStatusText">متصل بالمزامنة</span>
+                </div>
+                <span class="text-[10px] text-gold-500/80 font-mono">v3.0 Live</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden">
+
+            <!-- Top Header Bar (With Prominent Save & Sync Button) -->
+            <header class="h-20 bg-slate-950/80 border-b border-gold-500/30 px-8 flex items-center justify-between z-10 backdrop-blur-md">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-shield-halved text-gold-500 text-xl"></i>
+                    <h2 id="currentSectionTitle" class="text-xl font-bold text-white tracking-wide">قسم الجيميلات</h2>
+                </div>
+
+                <!-- SAVE / SYNC BUTTON (Top Opposite Side) -->
+                <button id="globalSyncBtn" class="group relative px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-600 via-gold-500 to-amber-400 text-slate-950 font-black text-sm tracking-wide shadow-lg shadow-gold-500/20 hover:shadow-gold-500/40 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 border border-gold-300">
+                    <i class="fa-solid fa-cloud-arrow-up text-base group-hover:animate-bounce"></i>
+                    <span>حفظ وتزامن مع الجميع</span>
+                    <span class="inline-flex items-center justify-center bg-slate-950/20 px-2 py-0.5 rounded-md text-xs font-mono text-slate-900">
+                        <i class="fa-solid fa-sync fa-spin hidden" id="syncSpinner"></i>
+                        <span id="syncTextLabel">مباشر</span>
+                    </span>
+                </button>
+            </header>
+
+            <!-- Dynamic Section Views -->
+            <main class="flex-1 overflow-y-auto p-8 space-y-6">
+
+                <!-- Form Template / Generator Area -->
+                <div class="gold-card p-6 rounded-2xl mb-8 border border-gold-500/30">
+                    <h3 class="text-lg font-bold text-gold-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span id="formHeaderTitle">إضافة عنصر جديد</span>
+                    </h3>
+                    
+                    <!-- Dynamic Input Fields Container -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" id="dynamicInputsContainer">
+                        <!-- Javascript injects inputs depending on selected section -->
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button id="addRecordBtn" class="bg-gradient-to-r from-gold-500 to-amber-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-gold-500/20">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>إضافة للحافظة المؤقتة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Items Cards Display Grid -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-md font-bold text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-gold-500"></i>
+                            <span>العناصر المحفوظة حالياً</span>
+                        </h3>
+                        <span id="itemsCount" class="text-xs font-bold text-gold-400 bg-gold-500/10 px-3 py-1 rounded-full border border-gold-500/20">0 عنصر</span>
+                    </div>
+
+                    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- Dynamic Cards Rendered Here -->
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Firebase Modular Setup -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase Configuration fallback
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "AIzaSyDemoConfigKeyForZeroKingSync",
+                authDomain: "zeroking-app.firebaseapp.com",
+                projectId: "zeroking-app",
+                storageBucket: "zeroking-app.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:abcdef123456"
+            };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'zeroking-shared-hub';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // State Store
+        let currentSection = 'gmail';
+        let appData = {
+            gmail: [],
+            accounts: [],
+            codes: [],
+            scripts: [],
+            hacks: [],
+            general: [],
+            pubg: [],
+            roblox: [],
+            clipboard: [],
+            images: []
+        };
+
+        // UI Toast Helper
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+            if (isError) {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-500 text-lg";
+                toast.className = toast.className.replace('border-gold-500 text-gold-300', 'border-rose-500 text-rose-300');
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-gold-500 text-lg";
+                toast.className = toast.className.replace('border-rose-500 text-rose-300', 'border-gold-500 text-gold-300');
+            }
+
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Custom Cursor Logic
+        const cursor = document.getElementById('customCursor');
+        const cursorFollower = document.getElementById('customCursorFollower');
+
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX + 'px';
+                cursorFollower.style.top = e.clientY + 'px';
+            }, 50);
+        });
+
+        // Initialize Authentication & Live Firestore Sync
+        async function initSyncEngine() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Document path for public team sharing (Rule 1)
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'zeroking_database', 'main_store');
+
+                // Live Listener (Real-time updates across brothers/users)
+                onSnapshot(docRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const cloudData = snapshot.data();
+                        if (cloudData && cloudData.store) {
+                            appData = { ...appData, ...cloudData.store };
+                            renderCurrentSection();
+                            updateSyncStatus(true);
+                        }
+                    } else {
+                        // First time setup - Save initial local storage fallback to cloud
+                        loadFromLocalStorage();
+                        saveToCloud(false);
+                    }
+                }, (error) => {
+                    console.error("Firebase sync listener error:", error);
+                    updateSyncStatus(false);
+                    loadFromLocalStorage();
+                });
+
+            } catch (err) {
+                console.warn("Auth/Firebase initialization failed, falling back to offline mode:", err);
+                updateSyncStatus(false);
+                loadFromLocalStorage();
+            }
+        }
+
+        // Save Data to Cloud on "حفظ وتزامن مع الجميع" click
+        async function saveToCloud(notify = true) {
+            const syncSpinner = document.getElementById('syncSpinner');
+            const syncTextLabel = document.getElementById('syncTextLabel');
+            
+            syncSpinner.classList.remove('hidden');
+            syncTextLabel.innerText = "جاري الحفظ...";
+
+            try {
+                // Save locally first
+                localStorage.setItem('zeroking_master_data', JSON.stringify(appData));
+
+                // Save to Firestore Shared Document
+                if (auth.currentUser) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'zeroking_database', 'main_store');
+                    await setDoc(docRef, {
+                        store: appData,
+                        lastUpdated: new Date().toISOString(),
+                        updatedBy: auth.currentUser.uid
+                    }, { merge: true });
+                }
+
+                if (notify) {
+                    showToast('تم حفظ وتنسيق البيانات مع أسرع مزامنة!');
+                }
+            } catch (err) {
+                console.error("Save error:", err);
+                showToast('تم الحفظ محلياً (حدث خطأ بشبكة السحابة)', true);
+            } finally {
+                syncSpinner.classList.add('hidden');
+                syncTextLabel.innerText = "مباشر";
+            }
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('zeroking_master_data');
+            if (saved) {
+                try {
+                    appData = { ...appData, ...JSON.parse(saved) };
+                } catch(e) {}
+            }
+            renderCurrentSection();
+        }
+
+        function updateSyncStatus(isLive) {
+            const syncDot = document.getElementById('syncDot');
+            const syncStatusText = document.getElementById('syncStatusText');
+            if (isLive) {
+                syncDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                syncStatusText.innerText = "متصل بالمزامنة المباشرة";
+            } else {
+                syncDot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
+                syncStatusText.innerText = "وضع الحفظ المحلي";
+            }
+        }
+
+        // Section Inputs Schema & UI Configuration
+        const sectionConfig = {
+            gmail: {
+                title: 'قسم الجيميلات',
+                fields: [
+                    { id: 'title', label: 'العنوان / الوصف', placeholder: 'مثال: جيميل العاب القناة' },
+                    { id: 'value', label: 'البريد وكلمة المرور', placeholder: 'user@gmail.com : pass123' }
+                ]
+            },
+            accounts: {
+                title: 'قسم الأكونتات',
+                fields: [
+                    { id: 'title', label: 'اسم الموقع / المنصة', placeholder: 'مثال: Facebook / Steam' },
+                    { id: 'value', label: 'بيانات الحساب', placeholder: 'اسم المستخدم / الرقم السر' }
+                ]
+            },
+            codes: {
+                title: 'قسم الأكواد',
+                fields: [
+                    { id: 'title', label: 'عنوان الكود', placeholder: 'مثال: كود تفعيل المزامنة' },
+                    { id: 'value', label: 'الكود / الشفرة', type: 'textarea', placeholder: 'انقل الكود هنا...' }
+                ]
+            },
+            scripts: {
+                title: 'قسم السكريبتات',
+                fields: [
+                    { id: 'title', label: 'اسم السكريبت', placeholder: 'مثال: Auto Farm Script' },
+                    { id: 'value', label: 'السكريبت', type: 'textarea', placeholder: 'loadstring(game:HttpGet(...))()' }
+                ]
+            },
+            hacks: {
+                title: 'قسم الهكات',
+                fields: [
+                    { id: 'title', label: 'اسم الهك / اللعبة', placeholder: 'مثال: هك ببجي موبايل v2' },
+                    { id: 'value', label: 'بيانات الهك / المفتاح / الرابط', type: 'textarea', placeholder: 'المفتاح أو رابط التنزيل...' }
+                ]
+            },
+            general: {
+                title: 'قسم الحسابات العامة',
+                fields: [
+                    { id: 'title', label: 'اسم الحساب', placeholder: 'مثال: حساب البنك / تيك توك' },
+                    { id: 'value', label: 'بيانات الحساب والتفاصيل', placeholder: 'التفاصيل هنا...' }
+                ]
+            },
+            pubg: {
+                title: 'حسابات ببجي (PUBG)',
+                fields: [
+                    { id: 'title', label: 'إيدي الحساب والسيرفر', placeholder: 'ID: 512345678 (سيرفر أوروبا)' },
+                    { id: 'value', label: 'بيانات الدخول والباسوردات', placeholder: 'تويتر / فيسبوك / كلمة السر' }
+                ]
+            },
+            roblox: {
+                title: 'حسابات روبلوكس (Roblox)',
+                fields: [
+                    { id: 'title', label: 'اسم المستخدم (Username)', placeholder: 'ZeroKing_Gamer' },
+                    { id: 'value', label: 'كلمة المرور والتفاصيل', placeholder: 'Pass123456' }
+                ]
+            },
+            clipboard: {
+                title: 'الحافظة السريعة',
+                fields: [
+                    { id: 'title', label: 'عنوان الملاحظة', placeholder: 'ملاحظة مهمة' },
+                    { id: 'value', label: 'النص المحفوظ', type: 'textarea', placeholder: 'اكتب أو الصق أي نص هنا...' }
+                ]
+            },
+            images: {
+                title: 'قسم الصور',
+                isImageSection: true,
+                fields: [
+                    { id: 'title', label: 'وصف أو عنوان الصورة', placeholder: 'مثال: سكرين شوت الحساب' },
+                    { id: 'value', label: 'رابط الصورة أو اختر ملف / Ctrl+V للصق', placeholder: 'ضع رابط الصورة أو ارفقها أدناه' }
+                ]
+            }
+        };
+
+        // Render Dynamic Inputs
+        function renderSectionInputs() {
+            const config = sectionConfig[currentSection];
+            document.getElementById('currentSectionTitle').innerText = config.title;
+            document.getElementById('formHeaderTitle').innerText = `إضافة إلى ${config.title}`;
+
+            const container = document.getElementById('dynamicInputsContainer');
+            container.innerHTML = '';
+
+            config.fields.forEach(field => {
+                const wrapper = document.createElement('div');
+                wrapper.className = field.type === 'textarea' ? 'col-span-full' : 'col-span-1';
+
+                const label = document.createElement('label');
+                label.className = 'block text-xs font-bold text-gold-400 mb-1.5';
+                label.innerText = field.label;
+
+                let input;
+                if (field.type === 'textarea') {
+                    input = document.createElement('textarea');
+                    input.rows = 3;
+                } else {
+                    input = document.createElement('input');
+                    input.type = 'text';
+                }
+
+                input.id = `input-${field.id}`;
+                input.placeholder = field.placeholder;
+                input.className = 'w-full bg-slate-900/90 border border-gold-500/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-500 transition-all placeholder:text-slate-500';
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(input);
+                container.appendChild(wrapper);
+            });
+
+            // If image section, render extra upload / clipboard paste dropzone
+            if (config.isImageSection) {
+                const uploadZone = document.createElement('div');
+                uploadZone.className = 'col-span-full border-2 border-dashed border-gold-500/30 rounded-2xl p-6 text-center bg-slate-900/40 hover:bg-slate-900/70 transition-all cursor-pointer';
+                uploadZone.innerHTML = `
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gold-500 mb-2"></i>
+                    <p class="text-sm font-bold text-slate-200">انقر هنا لاختيار صورة أو اضغط <span class="text-gold-400 font-mono">Ctrl + V</span> للصق صورة مباشر من الحافظة!</p>
+                    <input type="file" id="imageFileInput" accept="image/*" class="hidden">
+                `;
+                
+                uploadZone.addEventListener('click', () => {
+                    document.getElementById('imageFileInput').click();
+                });
+
+                container.appendChild(uploadZone);
+
+                setTimeout(() => {
+                    document.getElementById('imageFileInput')?.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                document.getElementById('input-value').value = evt.target.result;
+                                showToast('تم اختيار الصورة بنجاح!');
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        // Render Cards Grid
+        function renderCurrentSection() {
+            renderSectionInputs();
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+
+            const list = appData[currentSection] || [];
+            document.getElementById('itemsCount').innerText = `${list.length} عناصر`;
+
+            if (list.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-500">
+                        <i class="fa-solid fa-box-open text-4xl mb-3 text-gold-500/40"></i>
+                        <p class="text-sm font-semibold">لا توجد عناصر محفوظة في هذا القسم بعد.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'gold-card rounded-2xl p-5 flex flex-col justify-between relative group transition-all duration-300';
+
+                if (currentSection === 'images') {
+                    card.innerHTML = `
+                        <div>
+                            <div class="overflow-hidden rounded-xl h-44 mb-3 border border-gold-500/20 bg-slate-950">
+                                <img src="${item.value}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/0f172a/d4af37?text=صورة+غير+متاحة'">
+                            </div>
+                            <h4 class="font-bold text-gold-300 text-base mb-1 truncate">${item.title || 'صورة بدون عنوان'}</h4>
+                        </div>
+                        <div class="flex items-center gap-2 mt-4 pt-3 border-t border-gold-500/10">
+                            <button onclick="window.copyItemText('${item.value.replace(/'/g, "\\'")}')" class="flex-1 bg-gold-500/10 hover:bg-gold-500/20 text-gold-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-gold-500/20">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>نسخ الصورة/الرابط</span>
+                            </button>
+                            <button onclick="window.deleteRecord(${index})" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold p-2 rounded-xl text-xs transition-all border border-rose-500/20">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-bold text-gold-400 text-base truncate">${item.title || 'عنصر بدون عنوان'}</h4>
+                                <span class="text-[10px] text-slate-500 font-mono bg-slate-900 px-2 py-0.5 rounded-md">#${index + 1}</span>
+                            </div>
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-gold-500/10 mb-3 text-xs text-slate-300 font-mono whitespace-pre-wrap break-all max-h-36 overflow-y-auto">
+                                ${escapeHtml(item.value)}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 pt-2 border-t border-gold-500/10">
+                            <button onclick="window.copyItemText(\`${escapeForOnClick(item.value)}\`)" class="flex-1 bg-gold-500/10 hover:bg-gold-500/20 text-gold-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-gold-500/20">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>نسخ التفاصيل</span>
+                            </button>
+                            <button onclick="window.deleteRecord(${index})" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold p-2.5 rounded-xl text-xs transition-all border border-rose-500/20">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Helper String Escapes
+        function escapeHtml(str) {
+            return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function escapeForOnClick(str) {
+            return (str || '').replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+        }
+
+        // Add Record Handler
+        document.getElementById('addRecordBtn').addEventListener('click', () => {
+            const titleInput = document.getElementById('input-title');
+            const valueInput = document.getElementById('input-value');
+
+            const title = titleInput ? titleInput.value.trim() : '';
+            const value = valueInput ? valueInput.value.trim() : '';
+
+            if (!value) {
+                showToast('يرجى كتابة التفاصيل أولاً!', true);
+                return;
+            }
+
+            if (!appData[currentSection]) {
+                appData[currentSection] = [];
+            }
+
+            appData[currentSection].unshift({
+                title: title || 'بدون عنوان',
+                value: value,
+                date: new Date().toLocaleTimeString('ar-EG')
+            });
+
+            if (titleInput) titleInput.value = '';
+            if (valueInput) valueInput.value = '';
+
+            renderCurrentSection();
+            saveToCloud(true);
+        });
+
+        // Global Delete Item
+        window.deleteRecord = function(index) {
+            if (appData[currentSection]) {
+                appData[currentSection].splice(index, 1);
+                renderCurrentSection();
+                saveToCloud(true);
+            }
+        };
+
+        // Global Copy Item Functionality
+        window.copyItemText = function(text) {
+            if (!text) return;
+            
+            // Fallback for document copy
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            try {
+                document.execCommand('copy');
+                showToast('تم النسخ إلى الحافظة بنجاح! 📋');
+            } catch (err) {
+                showToast('حدث خطأ أثناء النسخ', true);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        };
+
+        // Global Save / Sync Button Event Listener
+        document.getElementById('globalSyncBtn').addEventListener('click', () => {
+            saveToCloud(true);
+        });
+
+        // Navigation Switcher
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-gold-500/20', 'text-gold-400', 'border-gold-500/40');
+                });
+
+                btn.classList.add('active', 'bg-gold-500/20', 'text-gold-400', 'border-gold-500/40');
+                currentSection = btn.getAttribute('data-target').replace('section-', '');
+                renderCurrentSection();
+            });
+        });
+
+        // Clipboard Global Paste Event for Images
+        window.addEventListener('paste', (e) => {
+            if (currentSection === 'images') {
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        const blob = items[i].getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = function(evt) {
+                            const titleInput = document.getElementById('input-title');
+                            const title = (titleInput && titleInput.value.trim()) || ('صورة ملصقة ' + new Date().toLocaleTimeString('ar-EG'));
+
+                            appData.images.unshift({
+                                title: title,
+                                value: evt.target.result,
+                                date: new Date().toLocaleTimeString('ar-EG')
+                            });
+
+                            if (titleInput) titleInput.value = '';
+                            renderCurrentSection();
+                            saveToCloud(true);
+                            showToast('تم لصق الصورة وحفظها فوراً!');
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                }
+            }
+        });
+
+        // Bootstrap App
+        window.addEventListener('load', () => {
+            renderCurrentSection();
+            initSyncEngine();
+        });
+    </script>
+</body>
+</html>
