@@ -1,800 +1,799 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الزيرو كينج - ZEROKING Manager</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: {
-                            100: '#fff9db',
-                            300: '#f5d77f',
-                            400: '#e6c352',
-                            500: '#d4af37',
-                            600: '#b38f24',
-                            700: '#8c6d13',
-                        },
-                        darkpanel: 'rgba(15, 23, 42, 0.85)',
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ذكرياتنا الجميلة ❤️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Reem+Kufi:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #ff3366;
+      --secondary-color: #ff6584;
+      --accent-color: #ffd1dc;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      --text-color: #ffffff;
+    }
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      user-select: none;
+    }
 
-        * {
-            font-family: 'Cairo', sans-serif;
-            cursor: none !important; /* Force custom cursor */
-        }
+    body {
+      min-height: 100vh;
+      background-color: #0b0914;
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        body {
-            background-color: #090d16;
-            color: #f8fafc;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
+    /* Dynamic Slideshow Background */
+    .bg-slideshow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      opacity: 0.3;
+      filter: blur(12px) brightness(0.7);
+      transform: scale(1.05);
+      transition: all 1s ease-in-out;
+    }
 
-        /* Dynamic animated gradient background */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2;
-            background: linear-gradient(135deg, #070a12 0%, #111827 40%, #1a1205 70%, #070a12 100%);
-            background-size: 300% 300%;
-            animation: gradientMove 12s ease infinite;
-        }
+    .bg-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    .bg-slide.active {
+      opacity: 1;
+    }
 
-        /* Gold glow overlay */
-        .gold-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            background: radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.08) 0%, rgba(0, 0, 0, 0.7) 80%);
-            pointer-events: none;
-        }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(11, 9, 20, 0.6) 0%, rgba(11, 9, 20, 0.95) 100%);
+      z-index: -1;
+    }
 
-        /* Custom Chroma Rainbow Pointer */
-        .custom-cursor {
-            position: fixed;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.9);
-            animation: spinCursor 2s linear infinite;
-            transition: transform 0.05s ease-out;
-        }
+    /* Floating Hearts Animation */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
 
-        .custom-cursor-follower {
-            position: fixed;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            border: 2px solid rgba(212, 175, 55, 0.6);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 9998;
-            transition: transform 0.15s ease-out, left 0.1s ease-out, top 0.1s ease-out;
-        }
+    .heart-particle {
+      position: absolute;
+      color: rgba(255, 51, 102, 0.5);
+      font-size: 18px;
+      animation: floatUp 9s linear infinite;
+      bottom: -10%;
+      filter: drop-shadow(0 0 6px rgba(255, 51, 102, 0.8));
+    }
 
-        @keyframes spinCursor {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.7);
+        opacity: 0;
+      }
+      15% { opacity: 0.9; }
+      85% { opacity: 0.9; }
+      100% {
+        transform: translateY(-115vh) rotate(360deg) scale(1.3);
+        opacity: 0;
+      }
+    }
 
-        /* Custom scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d4af37;
-            border-radius: 4px;
-        }
+    /* Glassmorphic Cards Styling */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+    }
 
-        /* Gold Glassmorphism */
-        .gold-card {
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
+    /* Lock Screen Modal */
+    #lockScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      background: rgba(8, 6, 15, 0.96);
+      backdrop-filter: blur(25px);
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
 
-        .gold-card:hover {
-            border-color: rgba(212, 175, 55, 0.6);
-            box-shadow: 0 10px 35px 0 rgba(212, 175, 55, 0.15);
-        }
+    #lockScreen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-        /* Glowing text */
-        .text-gold-glow {
-            color: #d4af37;
-            text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
-        }
-    </style>
+    .lock-box {
+      width: 90%;
+      max-width: 420px;
+      padding: 45px 30px;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(255, 51, 102, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .lock-icon {
+      font-size: 55px;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      animation: heartPulse 1.8s infinite ease-in-out;
+      filter: drop-shadow(0 0 15px rgba(255, 51, 102, 0.8));
+    }
+
+    @keyframes heartPulse {
+      0% { transform: scale(1); }
+      14% { transform: scale(1.2); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.2); }
+      70% { transform: scale(1); }
+    }
+
+    .lock-title {
+      font-family: 'Reem Kufi', sans-serif;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .lock-desc {
+      font-size: 14px;
+      color: #bbb;
+      margin-bottom: 28px;
+    }
+
+    .password-input-group {
+      position: relative;
+      margin-bottom: 22px;
+    }
+
+    .password-input-group input {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 50px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 18px;
+      text-align: center;
+      outline: none;
+      transition: all 0.3s ease;
+      letter-spacing: 2px;
+    }
+
+    .password-input-group input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-unlock {
+      width: 100%;
+      padding: 15px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(255, 51, 102, 0.5);
+    }
+
+    .btn-unlock:hover {
+      transform: translateY(-3deg) scale(1.02);
+      box-shadow: 0 12px 30px rgba(255, 51, 102, 0.7);
+    }
+
+    .error-msg {
+      color: #ff4d6d;
+      font-size: 13px;
+      margin-top: 15px;
+      display: none;
+      font-weight: 600;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .main-title {
+      font-family: 'Reem Kufi', sans-serif;
+      font-size: 46px;
+      color: #fff;
+      text-shadow: 0 0 25px rgba(255, 51, 102, 0.8);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--accent-color);
+      opacity: 0.9;
+    }
+
+    /* Timer Section */
+    .counter-section {
+      padding: 35px 20px;
+      margin-bottom: 30px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .counter-title {
+      font-size: 21px;
+      margin-bottom: 22px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .timer-grid {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .timer-box {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 16px 20px;
+      border-radius: 18px;
+      min-width: 100px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 0 15px rgba(255, 51, 102, 0.1);
+    }
+
+    .timer-num {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--secondary-color);
+      display: block;
+      line-height: 1;
+      margin-bottom: 6px;
+      text-shadow: 0 0 10px rgba(255, 101, 132, 0.5);
+    }
+
+    .timer-label {
+      font-size: 13px;
+      color: #bbb;
+    }
+
+    /* Love Message Box Styling */
+    .message-section {
+      padding: 35px 30px;
+      margin-bottom: 45px;
+      border: 1px solid rgba(255, 51, 102, 0.35);
+      background: linear-gradient(145deg, rgba(20, 15, 35, 0.85), rgba(11, 9, 20, 0.9));
+      box-shadow: 0 15px 40px rgba(255, 51, 102, 0.15);
+      border-radius: 24px;
+    }
+
+    .message-content {
+      font-size: 16px;
+      line-height: 2.1;
+      color: #f1f1f1;
+      text-align: justify;
+      white-space: pre-line;
+      font-weight: 600;
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .card:hover {
+      transform: translateY(-10deg);
+      border-color: var(--primary-color);
+      box-shadow: 0 20px 40px rgba(255, 51, 102, 0.35);
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      height: 320px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+
+    .card:hover .card-img {
+      transform: scale(1.08);
+    }
+
+    .card-footer {
+      padding: 18px 22px;
+      background: rgba(15, 12, 28, 0.6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .card-date {
+      font-size: 13px;
+      color: var(--secondary-color);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 51, 102, 0.12);
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 51, 102, 0.25);
+    }
+
+    /* Music Player Controls */
+    .music-player {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 22px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .music-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 5px 18px rgba(255, 51, 102, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.12);
+    }
+
+    .music-info {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .music-title {
+      font-weight: 800;
+      display: block;
+    }
+
+    /* Lightbox Modal */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 4, 10, 0.95);
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      padding: 20px;
+    }
+
+    .lightbox.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lightbox-content {
+      max-width: 900px;
+      width: 100%;
+      position: relative;
+      border-radius: 24px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .lightbox-img {
+      width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    .lightbox-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .lightbox-close:hover {
+      background: var(--primary-color);
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 600px) {
+      .main-title { font-size: 34px; }
+      .timer-num { font-size: 26px; }
+      .timer-box { min-width: 75px; padding: 12px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .card-img-wrap { height: 280px; }
+      .message-content { font-size: 14px; }
+    }
+  </style>
 </head>
-<body class="antialiased select-none">
+<body>
 
-    <!-- Backgrounds -->
-    <div class="animated-bg"></div>
-    <div class="gold-overlay"></div>
+  <!-- Background Music Audio (تأكد إن اسم الملف music.mp3) -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
 
-    <!-- Custom Cursors -->
-    <div class="custom-cursor" id="customCursor"></div>
-    <div class="custom-cursor-follower" id="customCursorFollower"></div>
+  <!-- Background Slideshow -->
+  <div class="bg-slideshow" id="bgSlideshow"></div>
+  <div class="overlay"></div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 ease-out bg-slate-900 border border-gold-500 text-gold-300 px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3">
-        <i id="toastIcon" class="fa-solid fa-circle-check text-gold-500 text-lg"></i>
-        <span id="toastMsg" class="font-bold text-sm">تم العملية بنجاح!</span>
+  <!-- Floating Hearts Particles -->
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- Password Screen Modal -->
+  <div id="lockScreen">
+    <div class="lock-box glass-card">
+      <i class="fa-solid fa-heart lock-icon"></i>
+      <h2 class="lock-title">مرحباً بكِ يا أجمل ذكرياتي ❤️</h2>
+      <p class="lock-desc">ادخلي تاريخ لقائنا الأول للدخول (17/02/2026)</p>
+      
+      <div class="password-input-group">
+        <input type="text" id="passwordInput" placeholder="17/02/2026" autocomplete="off">
+      </div>
+      
+      <button class="btn-unlock" onclick="checkPassword()">فتح الذكريات ✨</button>
+      <div class="error-msg" id="errorMsg">التاريخ غير صحيح، حاولي مرة أخرى ❤️</div>
     </div>
+  </div>
 
-    <!-- Main Layout -->
-    <div class="flex h-screen overflow-hidden">
+  <!-- Main Web Content -->
+  <div class="container">
+    
+    <header>
+      <h1 class="main-title">حكايتنا وذكرياتنا الجميلة 💖</h1>
+      <p class="subtitle">كل لحظة معاكي بتسوى الدنيا وما فيها</p>
+    </header>
 
-        <!-- Sidebar -->
-        <aside class="w-72 bg-slate-950/90 border-l border-gold-500/30 flex flex-col justify-between p-4 z-20 backdrop-blur-md shadow-2xl">
-            <div>
-                <!-- Brand Header -->
-                <div class="text-center py-4 border-b border-gold-500/20 mb-6">
-                    <div class="flex items-center justify-center gap-2 mb-1">
-                        <i class="fa-solid fa-crown text-gold-500 text-2xl animate-bounce"></i>
-                        <h1 class="text-2xl font-black tracking-widest text-gold-glow">ZEROKING</h1>
-                    </div>
-                    <p class="text-xs text-slate-400 font-semibold tracking-wider">نظام المزامنة والتحكم الملكي</p>
-                </div>
-
-                <!-- Navigation Links -->
-                <nav class="space-y-1.5 overflow-y-auto max-h-[calc(100vh-210px)] pr-1">
-                    <button data-target="section-gmail" class="nav-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-envelope w-5 text-gold-500"></i>
-                        <span>قسم الجيميلات</span>
-                    </button>
-                    <button data-target="section-accounts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-user-shield w-5 text-gold-500"></i>
-                        <span>قسم الأكونتات</span>
-                    </button>
-                    <button data-target="section-codes" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-code w-5 text-gold-500"></i>
-                        <span>قسم الأكواد</span>
-                    </button>
-                    <button data-target="section-scripts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-terminal w-5 text-gold-500"></i>
-                        <span>قسم السكريبتات</span>
-                    </button>
-                    <button data-target="section-hacks" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-skull-crossbones w-5 text-gold-500"></i>
-                        <span>قسم الهكات</span>
-                    </button>
-                    <button data-target="section-general" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-key w-5 text-gold-500"></i>
-                        <span>قسم الحسابات</span>
-                    </button>
-                    <button data-target="section-pubg" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-crosshairs w-5 text-gold-500"></i>
-                        <span>حسابات ببجي</span>
-                    </button>
-                    <button data-target="section-roblox" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-cubes w-5 text-gold-500"></i>
-                        <span>حسابات روبلوكس</span>
-                    </button>
-                    <button data-target="section-clipboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-paste w-5 text-gold-500"></i>
-                        <span>الحافظة السريعة</span>
-                    </button>
-                    <button data-target="section-images" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-300 hover:text-gold-400 hover:bg-gold-500/10 border border-transparent">
-                        <i class="fa-solid fa-image w-5 text-gold-500"></i>
-                        <span>قسم الصور</span>
-                    </button>
-                </nav>
-            </div>
-
-            <!-- Online Sync Status Widget -->
-            <div class="pt-3 border-t border-gold-500/20 text-xs text-slate-400 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span id="syncStatusText">متصل بالمزامنة</span>
-                </div>
-                <span class="text-[10px] text-gold-500/80 font-mono">v3.0 Live</span>
-            </div>
-        </aside>
-
-        <!-- Main Content Wrapper -->
-        <div class="flex-1 flex flex-col h-screen overflow-hidden">
-
-            <!-- Top Header Bar (With Prominent Save & Sync Button) -->
-            <header class="h-20 bg-slate-950/80 border-b border-gold-500/30 px-8 flex items-center justify-between z-10 backdrop-blur-md">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-shield-halved text-gold-500 text-xl"></i>
-                    <h2 id="currentSectionTitle" class="text-xl font-bold text-white tracking-wide">قسم الجيميلات</h2>
-                </div>
-
-                <!-- SAVE / SYNC BUTTON (Top Opposite Side) -->
-                <button id="globalSyncBtn" class="group relative px-6 py-2.5 rounded-xl bg-gradient-to-r from-gold-600 via-gold-500 to-amber-400 text-slate-950 font-black text-sm tracking-wide shadow-lg shadow-gold-500/20 hover:shadow-gold-500/40 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 border border-gold-300">
-                    <i class="fa-solid fa-cloud-arrow-up text-base group-hover:animate-bounce"></i>
-                    <span>حفظ وتزامن مع الجميع</span>
-                    <span class="inline-flex items-center justify-center bg-slate-950/20 px-2 py-0.5 rounded-md text-xs font-mono text-slate-900">
-                        <i class="fa-solid fa-sync fa-spin hidden" id="syncSpinner"></i>
-                        <span id="syncTextLabel">مباشر</span>
-                    </span>
-                </button>
-            </header>
-
-            <!-- Dynamic Section Views -->
-            <main class="flex-1 overflow-y-auto p-8 space-y-6">
-
-                <!-- Form Template / Generator Area -->
-                <div class="gold-card p-6 rounded-2xl mb-8 border border-gold-500/30">
-                    <h3 class="text-lg font-bold text-gold-400 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-plus-circle"></i>
-                        <span id="formHeaderTitle">إضافة عنصر جديد</span>
-                    </h3>
-                    
-                    <!-- Dynamic Input Fields Container -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" id="dynamicInputsContainer">
-                        <!-- Javascript injects inputs depending on selected section -->
-                    </div>
-
-                    <div class="flex justify-end">
-                        <button id="addRecordBtn" class="bg-gradient-to-r from-gold-500 to-amber-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-gold-500/20">
-                            <i class="fa-solid fa-floppy-disk"></i>
-                            <span>إضافة للحافظة المؤقتة</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Live Items Cards Display Grid -->
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-md font-bold text-slate-300 flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-gold-500"></i>
-                            <span>العناصر المحفوظة حالياً</span>
-                        </h3>
-                        <span id="itemsCount" class="text-xs font-bold text-gold-400 bg-gold-500/10 px-3 py-1 rounded-full border border-gold-500/20">0 عنصر</span>
-                    </div>
-
-                    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        <!-- Dynamic Cards Rendered Here -->
-                    </div>
-                </div>
-
-            </main>
+    <!-- Relationship Counter -->
+    <section class="counter-section glass-card">
+      <h3 class="counter-title">الوقت الذي قضيناه معاً منذ أول يوم 💕</h3>
+      <div class="timer-grid">
+        <div class="timer-box">
+          <span class="timer-num" id="days">0</span>
+          <span class="timer-label">يوم</span>
         </div>
+        <div class="timer-box">
+          <span class="timer-num" id="hours">0</span>
+          <span class="timer-label">ساعة</span>
+        </div>
+        <div class="timer-box">
+          <span class="timer-num" id="minutes">0</span>
+          <span class="timer-label">دقيقة</span>
+        </div>
+        <div class="timer-box">
+          <span class="timer-num" id="seconds">0</span>
+          <span class="timer-label">ثانية</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deep Love Message Section -->
+    <section class="message-section glass-card">
+      <div class="message-content">
+إلى نن عيني وروحي وملاكي السعيد وملاكي دنيتي..
+
+الرسالة دي موجه لي نور عيني وقلبي وعمري وعمر سنيني فرحتي الي طلعت بيه من الدنيا أنا طول عمري عايش جسد بدون روح ولي من 266 يوم جالي أجمل واحسن ملاك ربنا خلقه وأحسن دنيا وجالي أحسن فرحة دنيتي كأنه جالي مولود بالظبط بس أنا جالي أحسن من كل حاجة حصلت في حياتي وأحسن ذكريات وأنتي معايا.
+
+وبجد وبجد أنا بحبك أوي وبتأسفلك عن أي حاجة حصلت مني ضايقتك أو أي حاجة، بس أنا بحبك حب مفيش من بعده حب أنا بحبك حب الإدمان بكل معني الكلمة. 
+أنا بصحى من نومي وأنا عمري ما كنت بصصحى بدري، لكن بقيت أصحى من نومي بدري عشان أصحيكي، وكمان مش أنا اللي بصحى لا ده أنتِ صوتك في دماغي بيصحيني كده، ده بقالي 30 يوم بصحى على صوتك من دماغي عشان أصحيكي.
+
+وبجد عايز أقولك كلمة واحدة بس أنا بعشقك ومش بعشقك بس أنا بحبك، وعملت الموقع ده وأنا مش قادر أفتح عيني من العياط عشان بجد أنا بحبك أوي ومش عايزك تبعدي عني لو حتى دقيقة يا أحسن إنسانة في حياتي كلها.
+      </div>
+    </section>
+
+    <!-- Outings Grid (12 Cards) -->
+    <main class="gallery-grid" id="galleryGrid"></main>
+
+  </div>
+
+  <!-- Floating Music Player Controls -->
+  <div class="music-player glass-card">
+    <button class="music-btn" id="musicToggle" onclick="toggleMusic()">
+      <i class="fa-solid fa-play" id="musicIcon"></i>
+    </button>
+    <div class="music-info">
+      <span class="music-title">أوعدك ❤️</span>
+      <span style="font-size: 11px; opacity: 0.8;">عايض</span>
     </div>
+  </div>
 
-    <!-- Firebase Modular Setup -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  <!-- Lightbox Modal Screen -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-content glass-card">
+      <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      <img src="" alt="preview" class="lightbox-img" id="lightboxImg">
+      <div class="lightbox-header">
+        <h3 class="card-title" id="lightboxTitle" style="color: var(--primary-color); font-size: 24px;"></h3>
+        <div class="card-date" id="lightboxDate"></div>
+      </div>
+    </div>
+  </div>
 
-        // Global Firebase Configuration fallback
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "AIzaSyDemoConfigKeyForZeroKingSync",
-                authDomain: "zeroking-app.firebaseapp.com",
-                projectId: "zeroking-app",
-                storageBucket: "zeroking-app.appspot.com",
-                messagingSenderId: "123456789",
-                appId: "1:123456789:web:abcdef123456"
-            };
+  <script>
+    // 12 Direct Image Outings Data
+    const memories = [
+      { title: "الخروجة الأولى", date: "23 مارس 2026", img: "https://i.ibb.co/F4T3Gsh9/photo-6023837017742972759-y-1.jpg" },
+      { title: "الخروجة الثانية", date: "10 أبريل 2026", img: "https://i.ibb.co/d4jt0Q57/photo-6023837017742972767-y-1.jpg" },
+      { title: "الخروجة الثالثة", date: "2 مايو 2026", img: "https://i.ibb.co/wrbVK8tN/photo-6023837017742972750-y-1.jpg" },
+      { title: "الخروجة الرابعة", date: "18 مايو 2026", img: "https://i.ibb.co/MkWHfxyJ/photo-6023837017742972756-y-1.jpg" },
+      { title: "الخروجة الخامسة", date: "5 يونيو 2026", img: "https://i.ibb.co/KxKzTT0r/photo-6023837017742972778-y.jpg" },
+      { title: "الخروجة السادسة", date: "20 يونيو 2026", img: "https://i.ibb.co/QFJhvVxg/photo-6023837017742972776-y.jpg" },
+      { title: "الخروجة السابعة", date: "14 يوليو 2026", img: "https://i.ibb.co/yFkx5rhT/photo-6023837017742972779-y.jpg" },
+      { title: "الخروجة الثامنة", date: "1 أغسطس 2026", img: "https://i.ibb.co/fc7tTDT/photo-6023837017742972780-y.jpg" },
+      { title: "الخروجة التاسعة", date: "12 أكتوبر 2026", img: "https://i.ibb.co/N6wsmKD8/photo-6023837017742972781-y.jpg" },
+      { title: "الخروجة العاشرة", date: "16 أكتوبر 2026", img: "https://i.ibb.co/JRXQP0m2/photo-6023837017742972782-y.jpg" },
+      { title: "الخروجة الحادية عشر", date: "30 أكتوبر 2026", img: "https://i.ibb.co/hFNyr9Dk/photo-6023837017742972783-y.jpg" },
+      { title: "الخروجة الثانية عشر", date: "7 نوفمبر 2026", img: "https://i.ibb.co/ccrNdz1M/photo-6023837017742972784-y.jpg" }
+    ];
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'zeroking-shared-hub';
+    // Audio Logic
+    const audio = document.getElementById('bgMusic');
+    const musicIcon = document.getElementById('musicIcon');
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    function playMusic() {
+      audio.play().then(() => {
+        musicIcon.className = 'fa-solid fa-pause';
+      }).catch(err => {
+        console.log("Audio play error:", err);
+      });
+    }
 
-        // State Store
-        let currentSection = 'gmail';
-        let appData = {
-            gmail: [],
-            accounts: [],
-            codes: [],
-            scripts: [],
-            hacks: [],
-            general: [],
-            pubg: [],
-            roblox: [],
-            clipboard: [],
-            images: []
-        };
+    function toggleMusic() {
+      if (audio.paused) {
+        audio.play();
+        musicIcon.className = 'fa-solid fa-pause';
+      } else {
+        audio.pause();
+        musicIcon.className = 'fa-solid fa-play';
+      }
+    }
 
-        // UI Toast Helper
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            const toastIcon = document.getElementById('toastIcon');
+    // Check Password Function
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
+      const lockScreen = document.getElementById('lockScreen');
 
-            toastMsg.innerText = message;
-            if (isError) {
-                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-500 text-lg";
-                toast.className = toast.className.replace('border-gold-500 text-gold-300', 'border-rose-500 text-rose-300');
-            } else {
-                toastIcon.className = "fa-solid fa-circle-check text-gold-500 text-lg";
-                toast.className = toast.className.replace('border-rose-500 text-rose-300', 'border-gold-500 text-gold-300');
-            }
+      if (input === '17/02/2026' || input === '17-02-2026' || input === '17022026') {
+        lockScreen.classList.add('hidden');
+        playMusic(); // تفعيل الأغنية فوراً بعد التفاعل والضغط
+        initTimer();
+      } else {
+        errorMsg.style.display = 'block';
+        document.getElementById('passwordInput').style.borderColor = '#ff4d6d';
+      }
+    }
 
-            toast.classList.remove('-translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
+    // Hearts Animation
+    function createHearts() {
+      const container = document.getElementById('heartsContainer');
+      const heartIcons = ['fa-heart', 'fa-heart-pulse'];
+      
+      for (let i = 0; i < 30; i++) {
+        const heart = document.createElement('i');
+        const randomIcon = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+        heart.className = `fa-solid ${randomIcon} heart-particle`;
+        
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 8 + 's';
+        heart.style.animationDuration = (Math.random() * 5 + 7) + 's';
+        heart.style.fontSize = (Math.random() * 16 + 12) + 'px';
+        
+        container.appendChild(heart);
+      }
+    }
 
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('-translate-y-20', 'opacity-0');
-            }, 3000);
+    // Dynamic Background Slideshow
+    function setupSlideshow() {
+      const slideshow = document.getElementById('bgSlideshow');
+      memories.forEach((mem, idx) => {
+        const slide = document.createElement('div');
+        slide.className = `bg-slide ${idx === 0 ? 'active' : ''}`;
+        slide.style.backgroundImage = `url('${mem.img}')`;
+        slideshow.appendChild(slide);
+      });
+
+      let currentSlide = 0;
+      const slides = document.querySelectorAll('.bg-slide');
+      setInterval(() => {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+      }, 5000);
+    }
+
+    // Render Gallery
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+
+      memories.forEach((mem, index) => {
+        const card = document.createElement('div');
+        card.className = 'card glass-card';
+        card.onclick = () => openLightbox(index);
+
+        card.innerHTML = `
+          <div class="card-img-wrap">
+            <img src="${mem.img}" alt="${mem.title}" class="card-img" loading="lazy">
+          </div>
+          <div class="card-footer">
+            <h3 class="card-title">${mem.title}</h3>
+            <div class="card-date">
+              <i class="fa-regular fa-calendar-days"></i>
+              <span>${mem.date}</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Lightbox Controls
+    function openLightbox(index) {
+      const mem = memories[index];
+      document.getElementById('lightboxImg').src = mem.img;
+      document.getElementById('lightboxTitle').innerText = mem.title;
+      document.getElementById('lightboxDate').innerHTML = `<i class="fa-regular fa-calendar-days"></i> ${mem.date}`;
+      document.getElementById('lightbox').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+
+    // Timer Logic
+    function initTimer() {
+      const startDate = new Date('2026-02-17T00:00:00');
+
+      function updateCounter() {
+        const now = new Date();
+        const diff = now - startDate;
+
+        if (diff < 0) {
+          document.getElementById('days').innerText = "0";
+          document.getElementById('hours').innerText = "0";
+          document.getElementById('minutes').innerText = "0";
+          document.getElementById('seconds').innerText = "0";
+          return;
         }
 
-        // Custom Cursor Logic
-        const cursor = document.getElementById('customCursor');
-        const cursorFollower = document.getElementById('customCursorFollower');
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / 1000 / 60) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
 
-        window.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            
-            setTimeout(() => {
-                cursorFollower.style.left = e.clientX + 'px';
-                cursorFollower.style.top = e.clientY + 'px';
-            }, 50);
-        });
+        document.getElementById('days').innerText = days;
+        document.getElementById('hours').innerText = hours;
+        document.getElementById('minutes').innerText = minutes;
+        document.getElementById('seconds').innerText = seconds;
+      }
 
-        // Initialize Authentication & Live Firestore Sync
-        async function initSyncEngine() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+      updateCounter();
+      setInterval(updateCounter, 1000);
+    }
 
-                // Document path for public team sharing (Rule 1)
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'zeroking_database', 'main_store');
+    // Enter Key Handler
+    document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        checkPassword();
+      }
+    });
 
-                // Live Listener (Real-time updates across brothers/users)
-                onSnapshot(docRef, (snapshot) => {
-                    if (snapshot.exists()) {
-                        const cloudData = snapshot.data();
-                        if (cloudData && cloudData.store) {
-                            appData = { ...appData, ...cloudData.store };
-                            renderCurrentSection();
-                            updateSyncStatus(true);
-                        }
-                    } else {
-                        // First time setup - Save initial local storage fallback to cloud
-                        loadFromLocalStorage();
-                        saveToCloud(false);
-                    }
-                }, (error) => {
-                    console.error("Firebase sync listener error:", error);
-                    updateSyncStatus(false);
-                    loadFromLocalStorage();
-                });
-
-            } catch (err) {
-                console.warn("Auth/Firebase initialization failed, falling back to offline mode:", err);
-                updateSyncStatus(false);
-                loadFromLocalStorage();
-            }
-        }
-
-        // Save Data to Cloud on "حفظ وتزامن مع الجميع" click
-        async function saveToCloud(notify = true) {
-            const syncSpinner = document.getElementById('syncSpinner');
-            const syncTextLabel = document.getElementById('syncTextLabel');
-            
-            syncSpinner.classList.remove('hidden');
-            syncTextLabel.innerText = "جاري الحفظ...";
-
-            try {
-                // Save locally first
-                localStorage.setItem('zeroking_master_data', JSON.stringify(appData));
-
-                // Save to Firestore Shared Document
-                if (auth.currentUser) {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'zeroking_database', 'main_store');
-                    await setDoc(docRef, {
-                        store: appData,
-                        lastUpdated: new Date().toISOString(),
-                        updatedBy: auth.currentUser.uid
-                    }, { merge: true });
-                }
-
-                if (notify) {
-                    showToast('تم حفظ وتنسيق البيانات مع أسرع مزامنة!');
-                }
-            } catch (err) {
-                console.error("Save error:", err);
-                showToast('تم الحفظ محلياً (حدث خطأ بشبكة السحابة)', true);
-            } finally {
-                syncSpinner.classList.add('hidden');
-                syncTextLabel.innerText = "مباشر";
-            }
-        }
-
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('zeroking_master_data');
-            if (saved) {
-                try {
-                    appData = { ...appData, ...JSON.parse(saved) };
-                } catch(e) {}
-            }
-            renderCurrentSection();
-        }
-
-        function updateSyncStatus(isLive) {
-            const syncDot = document.getElementById('syncDot');
-            const syncStatusText = document.getElementById('syncStatusText');
-            if (isLive) {
-                syncDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-                syncStatusText.innerText = "متصل بالمزامنة المباشرة";
-            } else {
-                syncDot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
-                syncStatusText.innerText = "وضع الحفظ المحلي";
-            }
-        }
-
-        // Section Inputs Schema & UI Configuration
-        const sectionConfig = {
-            gmail: {
-                title: 'قسم الجيميلات',
-                fields: [
-                    { id: 'title', label: 'العنوان / الوصف', placeholder: 'مثال: جيميل العاب القناة' },
-                    { id: 'value', label: 'البريد وكلمة المرور', placeholder: 'user@gmail.com : pass123' }
-                ]
-            },
-            accounts: {
-                title: 'قسم الأكونتات',
-                fields: [
-                    { id: 'title', label: 'اسم الموقع / المنصة', placeholder: 'مثال: Facebook / Steam' },
-                    { id: 'value', label: 'بيانات الحساب', placeholder: 'اسم المستخدم / الرقم السر' }
-                ]
-            },
-            codes: {
-                title: 'قسم الأكواد',
-                fields: [
-                    { id: 'title', label: 'عنوان الكود', placeholder: 'مثال: كود تفعيل المزامنة' },
-                    { id: 'value', label: 'الكود / الشفرة', type: 'textarea', placeholder: 'انقل الكود هنا...' }
-                ]
-            },
-            scripts: {
-                title: 'قسم السكريبتات',
-                fields: [
-                    { id: 'title', label: 'اسم السكريبت', placeholder: 'مثال: Auto Farm Script' },
-                    { id: 'value', label: 'السكريبت', type: 'textarea', placeholder: 'loadstring(game:HttpGet(...))()' }
-                ]
-            },
-            hacks: {
-                title: 'قسم الهكات',
-                fields: [
-                    { id: 'title', label: 'اسم الهك / اللعبة', placeholder: 'مثال: هك ببجي موبايل v2' },
-                    { id: 'value', label: 'بيانات الهك / المفتاح / الرابط', type: 'textarea', placeholder: 'المفتاح أو رابط التنزيل...' }
-                ]
-            },
-            general: {
-                title: 'قسم الحسابات العامة',
-                fields: [
-                    { id: 'title', label: 'اسم الحساب', placeholder: 'مثال: حساب البنك / تيك توك' },
-                    { id: 'value', label: 'بيانات الحساب والتفاصيل', placeholder: 'التفاصيل هنا...' }
-                ]
-            },
-            pubg: {
-                title: 'حسابات ببجي (PUBG)',
-                fields: [
-                    { id: 'title', label: 'إيدي الحساب والسيرفر', placeholder: 'ID: 512345678 (سيرفر أوروبا)' },
-                    { id: 'value', label: 'بيانات الدخول والباسوردات', placeholder: 'تويتر / فيسبوك / كلمة السر' }
-                ]
-            },
-            roblox: {
-                title: 'حسابات روبلوكس (Roblox)',
-                fields: [
-                    { id: 'title', label: 'اسم المستخدم (Username)', placeholder: 'ZeroKing_Gamer' },
-                    { id: 'value', label: 'كلمة المرور والتفاصيل', placeholder: 'Pass123456' }
-                ]
-            },
-            clipboard: {
-                title: 'الحافظة السريعة',
-                fields: [
-                    { id: 'title', label: 'عنوان الملاحظة', placeholder: 'ملاحظة مهمة' },
-                    { id: 'value', label: 'النص المحفوظ', type: 'textarea', placeholder: 'اكتب أو الصق أي نص هنا...' }
-                ]
-            },
-            images: {
-                title: 'قسم الصور',
-                isImageSection: true,
-                fields: [
-                    { id: 'title', label: 'وصف أو عنوان الصورة', placeholder: 'مثال: سكرين شوت الحساب' },
-                    { id: 'value', label: 'رابط الصورة أو اختر ملف / Ctrl+V للصق', placeholder: 'ضع رابط الصورة أو ارفقها أدناه' }
-                ]
-            }
-        };
-
-        // Render Dynamic Inputs
-        function renderSectionInputs() {
-            const config = sectionConfig[currentSection];
-            document.getElementById('currentSectionTitle').innerText = config.title;
-            document.getElementById('formHeaderTitle').innerText = `إضافة إلى ${config.title}`;
-
-            const container = document.getElementById('dynamicInputsContainer');
-            container.innerHTML = '';
-
-            config.fields.forEach(field => {
-                const wrapper = document.createElement('div');
-                wrapper.className = field.type === 'textarea' ? 'col-span-full' : 'col-span-1';
-
-                const label = document.createElement('label');
-                label.className = 'block text-xs font-bold text-gold-400 mb-1.5';
-                label.innerText = field.label;
-
-                let input;
-                if (field.type === 'textarea') {
-                    input = document.createElement('textarea');
-                    input.rows = 3;
-                } else {
-                    input = document.createElement('input');
-                    input.type = 'text';
-                }
-
-                input.id = `input-${field.id}`;
-                input.placeholder = field.placeholder;
-                input.className = 'w-full bg-slate-900/90 border border-gold-500/20 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-500 transition-all placeholder:text-slate-500';
-
-                wrapper.appendChild(label);
-                wrapper.appendChild(input);
-                container.appendChild(wrapper);
-            });
-
-            // If image section, render extra upload / clipboard paste dropzone
-            if (config.isImageSection) {
-                const uploadZone = document.createElement('div');
-                uploadZone.className = 'col-span-full border-2 border-dashed border-gold-500/30 rounded-2xl p-6 text-center bg-slate-900/40 hover:bg-slate-900/70 transition-all cursor-pointer';
-                uploadZone.innerHTML = `
-                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gold-500 mb-2"></i>
-                    <p class="text-sm font-bold text-slate-200">انقر هنا لاختيار صورة أو اضغط <span class="text-gold-400 font-mono">Ctrl + V</span> للصق صورة مباشر من الحافظة!</p>
-                    <input type="file" id="imageFileInput" accept="image/*" class="hidden">
-                `;
-                
-                uploadZone.addEventListener('click', () => {
-                    document.getElementById('imageFileInput').click();
-                });
-
-                container.appendChild(uploadZone);
-
-                setTimeout(() => {
-                    document.getElementById('imageFileInput')?.addEventListener('change', (e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = function(evt) {
-                                document.getElementById('input-value').value = evt.target.result;
-                                showToast('تم اختيار الصورة بنجاح!');
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                }, 100);
-            }
-        }
-
-        // Render Cards Grid
-        function renderCurrentSection() {
-            renderSectionInputs();
-            const grid = document.getElementById('cardsGrid');
-            grid.innerHTML = '';
-
-            const list = appData[currentSection] || [];
-            document.getElementById('itemsCount').innerText = `${list.length} عناصر`;
-
-            if (list.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full py-12 text-center text-slate-500">
-                        <i class="fa-solid fa-box-open text-4xl mb-3 text-gold-500/40"></i>
-                        <p class="text-sm font-semibold">لا توجد عناصر محفوظة في هذا القسم بعد.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            list.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'gold-card rounded-2xl p-5 flex flex-col justify-between relative group transition-all duration-300';
-
-                if (currentSection === 'images') {
-                    card.innerHTML = `
-                        <div>
-                            <div class="overflow-hidden rounded-xl h-44 mb-3 border border-gold-500/20 bg-slate-950">
-                                <img src="${item.value}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/0f172a/d4af37?text=صورة+غير+متاحة'">
-                            </div>
-                            <h4 class="font-bold text-gold-300 text-base mb-1 truncate">${item.title || 'صورة بدون عنوان'}</h4>
-                        </div>
-                        <div class="flex items-center gap-2 mt-4 pt-3 border-t border-gold-500/10">
-                            <button onclick="window.copyItemText('${item.value.replace(/'/g, "\\'")}')" class="flex-1 bg-gold-500/10 hover:bg-gold-500/20 text-gold-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-gold-500/20">
-                                <i class="fa-solid fa-copy"></i>
-                                <span>نسخ الصورة/الرابط</span>
-                            </button>
-                            <button onclick="window.deleteRecord(${index})" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold p-2 rounded-xl text-xs transition-all border border-rose-500/20">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-bold text-gold-400 text-base truncate">${item.title || 'عنصر بدون عنوان'}</h4>
-                                <span class="text-[10px] text-slate-500 font-mono bg-slate-900 px-2 py-0.5 rounded-md">#${index + 1}</span>
-                            </div>
-                            <div class="bg-slate-950/80 p-3 rounded-xl border border-gold-500/10 mb-3 text-xs text-slate-300 font-mono whitespace-pre-wrap break-all max-h-36 overflow-y-auto">
-                                ${escapeHtml(item.value)}
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 pt-2 border-t border-gold-500/10">
-                            <button onclick="window.copyItemText(\`${escapeForOnClick(item.value)}\`)" class="flex-1 bg-gold-500/10 hover:bg-gold-500/20 text-gold-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-gold-500/20">
-                                <i class="fa-solid fa-copy"></i>
-                                <span>نسخ التفاصيل</span>
-                            </button>
-                            <button onclick="window.deleteRecord(${index})" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold p-2.5 rounded-xl text-xs transition-all border border-rose-500/20">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                }
-
-                grid.appendChild(card);
-            });
-        }
-
-        // Helper String Escapes
-        function escapeHtml(str) {
-            return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-
-        function escapeForOnClick(str) {
-            return (str || '').replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
-        }
-
-        // Add Record Handler
-        document.getElementById('addRecordBtn').addEventListener('click', () => {
-            const titleInput = document.getElementById('input-title');
-            const valueInput = document.getElementById('input-value');
-
-            const title = titleInput ? titleInput.value.trim() : '';
-            const value = valueInput ? valueInput.value.trim() : '';
-
-            if (!value) {
-                showToast('يرجى كتابة التفاصيل أولاً!', true);
-                return;
-            }
-
-            if (!appData[currentSection]) {
-                appData[currentSection] = [];
-            }
-
-            appData[currentSection].unshift({
-                title: title || 'بدون عنوان',
-                value: value,
-                date: new Date().toLocaleTimeString('ar-EG')
-            });
-
-            if (titleInput) titleInput.value = '';
-            if (valueInput) valueInput.value = '';
-
-            renderCurrentSection();
-            saveToCloud(true);
-        });
-
-        // Global Delete Item
-        window.deleteRecord = function(index) {
-            if (appData[currentSection]) {
-                appData[currentSection].splice(index, 1);
-                renderCurrentSection();
-                saveToCloud(true);
-            }
-        };
-
-        // Global Copy Item Functionality
-        window.copyItemText = function(text) {
-            if (!text) return;
-            
-            // Fallback for document copy
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-
-            try {
-                document.execCommand('copy');
-                showToast('تم النسخ إلى الحافظة بنجاح! 📋');
-            } catch (err) {
-                showToast('حدث خطأ أثناء النسخ', true);
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        };
-
-        // Global Save / Sync Button Event Listener
-        document.getElementById('globalSyncBtn').addEventListener('click', () => {
-            saveToCloud(true);
-        });
-
-        // Navigation Switcher
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.nav-btn').forEach(b => {
-                    b.classList.remove('active', 'bg-gold-500/20', 'text-gold-400', 'border-gold-500/40');
-                });
-
-                btn.classList.add('active', 'bg-gold-500/20', 'text-gold-400', 'border-gold-500/40');
-                currentSection = btn.getAttribute('data-target').replace('section-', '');
-                renderCurrentSection();
-            });
-        });
-
-        // Clipboard Global Paste Event for Images
-        window.addEventListener('paste', (e) => {
-            if (currentSection === 'images') {
-                const items = e.clipboardData.items;
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.indexOf('image') !== -1) {
-                        const blob = items[i].getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = function(evt) {
-                            const titleInput = document.getElementById('input-title');
-                            const title = (titleInput && titleInput.value.trim()) || ('صورة ملصقة ' + new Date().toLocaleTimeString('ar-EG'));
-
-                            appData.images.unshift({
-                                title: title,
-                                value: evt.target.result,
-                                date: new Date().toLocaleTimeString('ar-EG')
-                            });
-
-                            if (titleInput) titleInput.value = '';
-                            renderCurrentSection();
-                            saveToCloud(true);
-                            showToast('تم لصق الصورة وحفظها فوراً!');
-                        };
-                        reader.readAsDataURL(blob);
-                    }
-                }
-            }
-        });
-
-        // Bootstrap App
-        window.addEventListener('load', () => {
-            renderCurrentSection();
-            initSyncEngine();
-        });
-    </script>
+    window.onload = () => {
+      createHearts();
+      setupSlideshow();
+      renderGallery();
+    };
+  </script>
 </body>
 </html>
